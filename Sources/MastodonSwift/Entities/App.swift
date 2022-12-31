@@ -7,7 +7,7 @@ public struct App: Codable {
     public let clientId: String
     public let clientSecret: String
     public let website: String?
-    public let vapidKey: String
+    public let vapidKey: String?
 
     public init(clientId: String, clientSecret: String, vapidKey: String = "") {
         self.id = ""
