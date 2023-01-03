@@ -21,6 +21,7 @@ public class Status: Codable {
     public let createdAt: String
     public let reblogsCount: Int
     public let favouritesCount: Int
+    public let repliesCount: Int
     public let reblogged: Bool
     public let favourited: Bool
     public let sensitive: Bool
@@ -47,6 +48,7 @@ public class Status: Codable {
         case createdAt = "created_at"
         case reblogsCount = "reblogs_count"
         case favouritesCount = "favourites_count"
+        case repliesCount = "replies_count"
         case reblogged
         case favourited
         case sensitive
@@ -76,6 +78,7 @@ public class Status: Codable {
         self.reblog = try? container.decode(Status.self, forKey: .reblog)
         self.spoilerText = try? container.decode(String.self, forKey: .spoilerText)
         self.reblogsCount = (try? container.decode(Int.self, forKey: .reblogsCount)) ?? 0
+        self.repliesCount = (try? container.decode(Int.self, forKey: .repliesCount)) ?? 0
         self.favouritesCount = (try? container.decode(Int.self, forKey: .favouritesCount)) ?? 0
         self.reblogged = (try? container.decode(Bool.self, forKey: .reblogged)) ?? false
         self.favourited = (try? container.decode(Bool.self, forKey: .favourited)) ?? false
@@ -118,6 +121,7 @@ public class Status: Codable {
         }
         try container.encode(reblogsCount, forKey: .reblogsCount)
         try container.encode(favouritesCount, forKey: .favouritesCount)
+        try container.encode(repliesCount, forKey: .repliesCount)
         try container.encode(reblogged, forKey: .reblogged)
         try container.encode(favourited, forKey: .favourited)
         try container.encode(bookmarked, forKey: .bookmarked)
