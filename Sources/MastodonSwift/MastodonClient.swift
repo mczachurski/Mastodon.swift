@@ -9,12 +9,12 @@ public enum MastodonClientError: Swift.Error {
     case oAuthCancelled
 }
 
-protocol MastodonClientProtocol {
+public protocol MastodonClientProtocol {
     static func request(for baseURL: URL, target: TargetType, withBearerToken token: String?) throws -> URLRequest
 }
 
-extension MastodonClientProtocol {
-    public static func request(for baseURL: URL, target: TargetType, withBearerToken token: String? = nil) throws -> URLRequest {
+public extension MastodonClientProtocol {
+    static func request(for baseURL: URL, target: TargetType, withBearerToken token: String? = nil) throws -> URLRequest {
         
         var urlComponents = URLComponents(url: baseURL.appendingPathComponent(target.path), resolvingAgainstBaseURL: false)
         urlComponents?.queryItems = target.queryItems?.map { URLQueryItem(name: $0.0, value: $0.1) }
@@ -65,9 +65,9 @@ public class MastodonClient: MastodonClientProtocol {
 
 public class MastodonClientAuthenticated: MastodonClientProtocol {
     
-    internal let token: Token
-    internal let baseURL: URL
-    internal let urlSession: URLSession
+    public let token: Token
+    public let baseURL: URL
+    public let urlSession: URLSession
 
     init(baseURL: URL, urlSession: URLSession, token: Token) {
         self.token = token
