@@ -4,8 +4,8 @@ extension Mastodon {
     public enum Account {
         case account(AccountId)
         case verifyCredentials
-        case followers(AccountId)
-        case following(AccountId)
+        case followers(AccountId, MaxId?, SinceId?, MinId?, Limit?)
+        case following(AccountId, MaxId?, SinceId?, MinId?, Limit?)
         case statuses(AccountId, Bool, Bool)
         case follow(AccountId)
         case unfollow(AccountId)
@@ -27,9 +27,9 @@ extension Mastodon.Account: TargetType {
             return "\(apiPath)/\(id)"
         case .verifyCredentials:
             return "\(apiPath)/verify_credentials"
-        case .followers(let id):
+        case .followers(let id, _, _, _, _):
             return "\(apiPath)/\(id)/followers"
-        case .following(let id):
+        case .following(let id, _, _, _, _):
             return "\(apiPath)/\(id)/following"
         case .statuses(let id, _, _):
             return "\(apiPath)/\(id)/statuses"
@@ -62,12 +62,19 @@ extension Mastodon.Account: TargetType {
     }
         
     public var queryItems: [(String, String)]? {
+        var params: [(String, String)] = []
+
+        var maxId: MaxId? = nil
+        var sinceId: SinceId? = nil
+        var minId: MinId? = nil
+        var limit: Limit? = nil
+
         switch self {
         case .statuses(_, let onlyMedia, let excludeReplies):
-            return [
+            params.append(contentsOf: [
                 ("only_media", onlyMedia.asString),
                 ("exclude_replies", excludeReplies.asString)
-            ]
+            ])
         case .relationships(let id):
             return id.map({ id in
                     ("id[]", id)
@@ -77,9 +84,34 @@ extension Mastodon.Account: TargetType {
                 ("q", query),
                 ("limit", limit.asString)
             ]
+        case .following(_, let _maxId, let _sinceId, let _minId, let _limit):
+            maxId = _maxId
+            sinceId = _sinceId
+            minId = _minId
+            limit = _limit
+        case .followers(_, let _maxId, let _sinceId, let _minId, let _limit):
+            maxId = _maxId
+            sinceId = _sinceId
+            minId = _minId
+            limit = _limit
         default:
             return nil
         }
+        
+        if let maxId {
+            params.append(("max_id",  maxId))
+        }
+        if let sinceId {
+            params.append(("since_id", sinceId))
+        }
+        if let minId {
+            params.append(("min_id", minId))
+        }
+        if let limit {
+            params.append(("limit", "\(limit)"))
+        }
+        
+        return params
     }
     
     public var headers: [String: String]? {
