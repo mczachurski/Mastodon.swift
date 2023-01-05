@@ -13,7 +13,7 @@ extension Mastodon {
         case unblock(AccountId)
         case mute(AccountId)
         case unmute(AccountId)
-        case relationships(AccountId)
+        case relationships([AccountId])
         case search(SearchQuery, Int)
     }
 }
@@ -67,9 +67,9 @@ extension Mastodon.Account: TargetType {
                 ("exclude_replies", excludeReplies.asString)
             ]
         case .relationships(let id):
-            return [
-                ("id", id) // todo: can be array
-            ]
+            return id.map({ id in
+                    ("id[]", id)
+                })
         case .search(let query, let limit):
             return [
                 ("q", query),
