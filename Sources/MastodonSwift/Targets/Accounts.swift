@@ -4,8 +4,8 @@ extension Mastodon {
     public enum Account {
         case account(AccountId)
         case verifyCredentials
-        case followers(AccountId, MaxId?, SinceId?, MinId?, Limit?)
-        case following(AccountId, MaxId?, SinceId?, MinId?, Limit?)
+        case followers(AccountId, MaxId?, SinceId?, MinId?, Limit?, Page?)
+        case following(AccountId, MaxId?, SinceId?, MinId?, Limit?, Page?)
         case statuses(AccountId, Bool, Bool)
         case follow(AccountId)
         case unfollow(AccountId)
@@ -27,9 +27,9 @@ extension Mastodon.Account: TargetType {
             return "\(apiPath)/\(id)"
         case .verifyCredentials:
             return "\(apiPath)/verify_credentials"
-        case .followers(let id, _, _, _, _):
+        case .followers(let id, _, _, _, _, _):
             return "\(apiPath)/\(id)/followers"
-        case .following(let id, _, _, _, _):
+        case .following(let id, _, _, _, _, _):
             return "\(apiPath)/\(id)/following"
         case .statuses(let id, _, _):
             return "\(apiPath)/\(id)/statuses"
@@ -68,6 +68,7 @@ extension Mastodon.Account: TargetType {
         var sinceId: SinceId? = nil
         var minId: MinId? = nil
         var limit: Limit? = nil
+        var page: Page? = nil
 
         switch self {
         case .statuses(_, let onlyMedia, let excludeReplies):
@@ -84,16 +85,18 @@ extension Mastodon.Account: TargetType {
                 ("q", query),
                 ("limit", limit.asString)
             ]
-        case .following(_, let _maxId, let _sinceId, let _minId, let _limit):
+        case .following(_, let _maxId, let _sinceId, let _minId, let _limit, let _page):
             maxId = _maxId
             sinceId = _sinceId
             minId = _minId
             limit = _limit
-        case .followers(_, let _maxId, let _sinceId, let _minId, let _limit):
+            page = _page
+        case .followers(_, let _maxId, let _sinceId, let _minId, let _limit, let _page):
             maxId = _maxId
             sinceId = _sinceId
             minId = _minId
             limit = _limit
+            page = _page
         default:
             return nil
         }
@@ -109,6 +112,9 @@ extension Mastodon.Account: TargetType {
         }
         if let limit {
             params.append(("limit", "\(limit)"))
+        }
+        if let page {
+            params.append(("page", "\(page)"))
         }
         
         return params

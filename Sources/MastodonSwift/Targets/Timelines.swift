@@ -4,6 +4,7 @@ public typealias SinceId = StatusId
 public typealias MaxId = StatusId
 public typealias MinId = StatusId
 public typealias Limit = Int
+public typealias Page = Int
 
 extension Mastodon {
     public enum Timelines {
