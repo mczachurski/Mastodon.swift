@@ -54,6 +54,8 @@ extension Mastodon.Account: TargetType {
     
     public var method: Method {
         switch self {
+        case .follow(_), .unfollow(_), .block(_), .unblock(_), .mute(_), .unmute(_):
+            return .post
         default:
             return .get
         }
