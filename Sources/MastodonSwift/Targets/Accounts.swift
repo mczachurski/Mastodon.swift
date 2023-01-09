@@ -6,7 +6,7 @@ extension Mastodon {
         case verifyCredentials
         case followers(AccountId, MaxId?, SinceId?, MinId?, Limit?, Page?)
         case following(AccountId, MaxId?, SinceId?, MinId?, Limit?, Page?)
-        case statuses(AccountId, Bool, Bool)
+        case statuses(AccountId, Bool, Bool, MaxId?, SinceId?, MinId?, Limit?)
         case follow(AccountId)
         case unfollow(AccountId)
         case block(AccountId)
@@ -31,7 +31,7 @@ extension Mastodon.Account: TargetType {
             return "\(apiPath)/\(id)/followers"
         case .following(let id, _, _, _, _, _):
             return "\(apiPath)/\(id)/following"
-        case .statuses(let id, _, _):
+        case .statuses(let id, _, _, _, _, _, _):
             return "\(apiPath)/\(id)/statuses"
         case .follow(let id):
             return "\(apiPath)/\(id)/follow"
@@ -71,11 +71,15 @@ extension Mastodon.Account: TargetType {
         var page: Page? = nil
 
         switch self {
-        case .statuses(_, let onlyMedia, let excludeReplies):
+        case .statuses(_, let onlyMedia, let excludeReplies, let _maxId, let _sinceId, let _minId, let _limit):
             params.append(contentsOf: [
                 ("only_media", onlyMedia.asString),
                 ("exclude_replies", excludeReplies.asString)
             ])
+            maxId = _maxId
+            sinceId = _sinceId
+            minId = _minId
+            limit = _limit
         case .relationships(let id):
             return id.map({ id in
                     ("id[]", id)
